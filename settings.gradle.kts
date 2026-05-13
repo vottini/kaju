@@ -29,3 +29,4 @@ dependencyResolutionManagement {
 }
 
 include(":kaju")
+include(":preview")
