@@ -4,7 +4,7 @@ compose = "1.7.3"
 agp = "8.13.1"
 compileSdk = "35"
 minSdk = "24"
-maven-publish = "0.30.0"
+maven-publish = "0.34.0"
 
 [libraries]
 compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose" }
