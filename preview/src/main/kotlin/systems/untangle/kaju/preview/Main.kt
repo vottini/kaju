@@ -1,11 +1,20 @@
 package systems.untangle.kaju.preview
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
+import systems.untangle.kaju.DefaultKajuConfig
 import systems.untangle.kaju.Kaju
+import systems.untangle.kaju.KajuConfig
 import systems.untangle.kaju.rememberKajuState
 
 private data class Node(val id: Int, val label: String, val children: List<Node> = emptyList())
@@ -31,14 +40,56 @@ fun main() = application {
     Window(onCloseRequest = ::exitApplication, title = "Kaju Preview") {
         val state = rememberKajuState<Int>()
         MaterialTheme {
-            Kaju(
-                header = previewTree,
-                rootSelector = { it },
-                leavesRetriever = { it.children },
-                identifier = { it.id },
-                treeState = state,
-            ) { node ->
-                Text(text = node.label)
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement
+                    .spacedBy(20.dp)
+            ) {
+                Column (
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Kaju(
+                        header = previewTree,
+                        rootSelector = { it },
+                        leavesRetriever = { it.children },
+                        identifier = { it.id },
+                        treeState = state,
+                    ) { node ->
+                        Text(text = node.label)
+                    }
+                }
+
+                Column (
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Kaju(
+                        header = previewTree,
+                        rootSelector = { it },
+                        leavesRetriever = { it.children },
+                        identifier = { it.id },
+                        collapsible = false,
+                        treeState = state,
+                    ) { node ->
+                        Text(text = node.label)
+                    }
+                }
+
+                Column (
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Kaju(
+                        header = previewTree,
+                        rootSelector = { it },
+                        leavesRetriever = { it.children },
+                        identifier = { it.id },
+                        collapsible = false,
+                        config = DefaultKajuConfig.copy(lineColor = Color.Blue),
+                        treeState = state,
+                    ) { node ->
+                        Text(text = node.label)
+                    }
+                }
             }
         }
     }

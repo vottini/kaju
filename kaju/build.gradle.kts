@@ -5,6 +5,9 @@ plugins {
     alias(libs.plugins.android.library)
 }
 
+group = "systems.untangle"
+version = "0.1.0"
+
 kotlin {
     jvm("desktop")
     androidLibrary {
@@ -19,9 +22,6 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.foundation)
             implementation(compose.material)
-        }
-        commonTest.dependencies {
-            implementation(kotlin("test"))
         }
     }
 }

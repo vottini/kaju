@@ -98,10 +98,10 @@ private fun DrawScope.drawSegments(lines: List<LineSegment>, color: Color) {
     val cy = size.height / 2f
     for (line in lines) {
         when (line) {
-            LineSegment.TOP    -> drawLine(color, Offset(cx, 0f),          Offset(cx, cy))
-            LineSegment.BOTTOM -> drawLine(color, Offset(cx, cy),          Offset(cx, size.height))
-            LineSegment.RIGHT  -> drawLine(color, Offset(cx, cy),          Offset(size.width, cy))
-            LineSegment.LEFT   -> drawLine(color, Offset(cx, cy),          Offset(0f, cy))
+            LineSegment.TOP    -> drawLine(color, Offset(cx, 0f), Offset(cx, cy))
+            LineSegment.BOTTOM -> drawLine(color, Offset(cx, cy), Offset(cx, size.height))
+            LineSegment.RIGHT  -> drawLine(color, Offset(cx, cy), Offset(size.width, cy))
+            LineSegment.LEFT   -> drawLine(color, Offset(cx, cy), Offset(0f, cy))
         }
     }
 }
@@ -117,12 +117,13 @@ private fun <T, U> LazyListScope.renderNode(
     toggleElement: (U) -> Unit,
     preamble: MutableList<FillingType>,
     config: KajuConfig,
+    collapsible: Boolean,
     renderer: @Composable (T) -> Unit
 ) {
     val ownId = identifier(element)
     val children = leavesRetriever(element)
     val isLeaf = children.isEmpty()
-    val isExpanded = !isLeaf && expandedIds.contains(ownId)
+    val isExpanded = !isLeaf && (if (collapsible) expandedIds.contains(ownId) else true)
     val nodeLines = if (isExpanded) expanded_node else collapsed_node
 
     item(ownId) {
@@ -144,7 +145,7 @@ private fun <T, U> LazyListScope.renderNode(
                 }
             }
 
-            if (isLeaf) {
+            if (isLeaf || !collapsible) {
                 Spacer(Modifier.connectors(nodeLines, config.lineColor))
             } else {
                 val icon = if (isExpanded) config.icons.expanded else config.icons.collapsed
@@ -185,8 +186,23 @@ private fun <T, U> LazyListScope.renderNode(
             val childPreamble = preamble
                 .map { if (it == FillingType.TAIL) FillingType.EMPTY else it }
                 .toMutableList()
-            childPreamble.add(if (child === lastElement) FillingType.TAIL else FillingType.THROUGH)
-            renderNode(child, leavesRetriever, identifier, expandedIds, toggleElement, childPreamble, config, renderer)
+
+            childPreamble.add(
+                if (child === lastElement) FillingType.TAIL
+                else FillingType.THROUGH
+            )
+
+            renderNode(
+                child,
+                leavesRetriever,
+                identifier,
+                expandedIds,
+                toggleElement,
+                childPreamble,
+                config,
+                collapsible,
+                renderer
+            )
         }
     }
 }
@@ -199,6 +215,7 @@ fun <H, T, U> Kaju(
     identifier: (T) -> U,
     treeState: KajuState<U>,
     config: KajuConfig = DefaultKajuConfig,
+    collapsible: Boolean = true,
     onSelect: (T) -> Unit = {},
     modifier: Modifier = Modifier,
     renderer: @Composable (T) -> Unit
@@ -211,7 +228,7 @@ fun <H, T, U> Kaju(
         renderNode(
             rootElement, leavesRetriever, identifier,
             expandedIds.value, toggleElement,
-            mutableListOf(), config, renderer
+            mutableListOf(), config, collapsible, renderer
         )
     }
 }
