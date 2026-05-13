@@ -207,6 +207,26 @@ private fun <T, U> LazyListScope.renderNode(
     }
 }
 
+/**
+ * Displays a lazily-rendered, collapsible tree view.
+ *
+ * The tree is described indirectly through a [header] object, allowing the root node to be
+ * absent (e.g. while loading). Connector lines between nodes are drawn via `Modifier.drawBehind`
+ * so they resolve in the same layout pass without recomposition flicker.
+ *
+ * @param H Type of the header object that owns the tree root.
+ * @param T Type of each tree node.
+ * @param U Type of the unique identifier for each node. Must be usable as a `LazyColumn` item key.
+ * @param header The object from which the root node is derived.
+ * @param rootSelector Extracts the root node from [header]. Return `null` to render nothing.
+ * @param leavesRetriever Returns the direct children of a given node. Return an empty collection for leaf nodes.
+ * @param identifier Returns a stable, unique key for a node. Used both for expansion state and lazy list keys.
+ * @param treeState Holds the set of currently expanded node ids. Create with [rememberKajuState].
+ * @param config Visual configuration (indentation, gap, line color, icons). Defaults to [DefaultKajuConfig].
+ * @param collapsible When `false`, all nodes are permanently expanded and toggle controls are hidden.
+ * @param modifier [Modifier] applied to the underlying [LazyColumn].
+ * @param renderer Composable content rendered for each node, receiving the node value.
+ */
 @Composable
 fun <H, T, U> Kaju(
     header: H,
@@ -216,7 +236,6 @@ fun <H, T, U> Kaju(
     treeState: KajuState<U>,
     config: KajuConfig = DefaultKajuConfig,
     collapsible: Boolean = true,
-    onSelect: (T) -> Unit = {},
     modifier: Modifier = Modifier,
     renderer: @Composable (T) -> Unit
 ) {
