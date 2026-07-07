@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -78,12 +79,17 @@ fun main() = application {
                 Column (
                     modifier = Modifier.weight(1f)
                 ) {
+                    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Button(onClick = {
+                            state.expandAll(previewTree, { it }, { it.children }, { it.id })
+                        }) { Text("Expand All") }
+                        Button(onClick = { state.collapseAll() }) { Text("Collapse All") }
+                    }
                     Kaju(
                         header = previewTree,
                         rootSelector = { it },
                         leavesRetriever = { it.children },
                         identifier = { it.id },
-                        collapsible = false,
                         config = DefaultKajuConfig.copy(lineColor = Color.Blue),
                         treeState = state,
                     ) { node ->

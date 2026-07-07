@@ -27,8 +27,8 @@ import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import br.mil.marinha.ipqm.c2fn.icons.buildFramedMinus
-import br.mil.marinha.ipqm.c2fn.icons.buildFramedPlus
+import systems.untangle.kaju.buildFramedMinus
+import systems.untangle.kaju.buildFramedPlus
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
@@ -70,6 +70,34 @@ class KajuState<T> {
             if (current.contains(id)) current - id
             else current + id
         }
+    }
+
+    fun expand(id: T) {
+        _expandedIds.update { current -> current + id }
+    }
+
+    fun collapse(id: T) {
+        _expandedIds.update { current -> current - id }
+    }
+
+    fun <H, N> expandAll(
+        header: H,
+        rootSelector: (H) -> N?,
+        leavesRetriever: (N) -> Collection<N>,
+        identifier: (N) -> T
+    ) {
+        val root = rootSelector(header) ?: return
+        val ids = mutableSetOf<T>()
+        fun collect(node: N) {
+            ids.add(identifier(node))
+            leavesRetriever(node).forEach { collect(it) }
+        }
+        collect(root)
+        _expandedIds.update { current -> current + ids }
+    }
+
+    fun collapseAll() {
+        _expandedIds.update { emptySet() }
     }
 }
 

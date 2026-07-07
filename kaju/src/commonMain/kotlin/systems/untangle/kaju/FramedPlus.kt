@@ -1,4 +1,4 @@
-package br.mil.marinha.ipqm.c2fn.icons
+package systems.untangle.kaju
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor

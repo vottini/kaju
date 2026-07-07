@@ -9,7 +9,7 @@ plugins {
 }
 
 group = "systems.untangle"
-version = "0.1.0"
+version = "0.1.1"
 
 kotlin {
     jvm("desktop")
@@ -25,6 +25,7 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.foundation)
             implementation(compose.material)
+            implementation(compose.components.uiToolingPreview)
         }
     }
 }
